@@ -4,6 +4,8 @@ import { Roboto } from 'next/font/google';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
+import { AuthProvider } from '@/components/AuthProvider/AuthProvider';
+import * as serverApi from '@/lib/api/serverApi';
 import './globals.css';
 
 const roboto = Roboto({
@@ -31,21 +33,31 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   modal,
 }: {
   children: ReactNode;
   modal: ReactNode;
 }) {
+  let initialUser = null;
+
+  try {
+    initialUser = await serverApi.checkSession();
+  } catch {
+    initialUser = null;
+  }
+
   return (
     <html lang="en" className={roboto.variable}>
       <body className={roboto.className}>
         <TanStackProvider>
-          <Header />
-          {children}
-          {modal}
-          <Footer />
+          <AuthProvider initialUser={initialUser}>
+            <Header />
+            {children}
+            {modal}
+            <Footer />
+          </AuthProvider>
         </TanStackProvider>
       </body>
     </html>
