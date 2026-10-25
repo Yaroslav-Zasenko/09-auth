@@ -1,3 +1,4 @@
+// lib/store/authStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
@@ -16,7 +17,8 @@ interface AuthState {
   logout: () => Promise<void>;
   checkSession: () => Promise<void>;
   clearError: () => void;
-  clearAuth: () => void; // Додано метод очищення
+  clearAuth: () => void;
+  clearIsAuthenticated: () => void; // Додано для сумісності з AuthNavigation
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -92,11 +94,12 @@ export const useAuthStore = create<AuthState>()(
 
       clearError: () => set({ error: null }),
 
-      // Додано реалізацію очищення для блоку finally у Header
       clearAuth: () => set({ user: null, isAuthenticated: false, error: null }),
+
+      clearIsAuthenticated: () => set({ user: null, isAuthenticated: false }),
     }),
     {
-      name: "auth-storage", // ключі зберігання в localStorage
+      name: "auth-storage",
     },
   ),
 );
