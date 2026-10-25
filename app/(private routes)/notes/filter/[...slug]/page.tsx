@@ -1,3 +1,4 @@
+// app/(private routes)/notes/filter/[...slug]/page.tsx
 import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { getNotes } from '@/lib/api/serverApi';
@@ -38,20 +39,20 @@ export default async function NotesFilterPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slugArray = resolvedParams.slug || ['all'];
   const currentTag = slugArray[0];
-  const tagFilter = currentTag === 'all' ? undefined : currentTag;
+  const tagFilter = currentTag === 'all' ? '' : currentTag;
 
   const queryClient = new QueryClient();
 
-  // Префетчимо дані з урахуванням тегу
+  // Префетчимо дані з урахуванням тегу (порядок аргументів у serverApi: search, page, tag)
   await queryClient.prefetchQuery({
-    queryKey: ['notes', { tag: tagFilter, page: 1, perPage: 12, search: '' }],
-    queryFn: () => getNotes({ tag: tagFilter, page: 1, perPage: 12, search: '' }),
+    queryKey: ['notes', { tag: tagFilter || undefined, page: 1, perPage: 12, search: '' }],
+    queryFn: () => getNotes('', 1, tagFilter),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       {/* Передаємо tagFilter у пропси так, як вимагає тест */}
-      <NotesClient tag={tagFilter} />
+      <NotesClient tag={tagFilter || undefined} />
     </HydrationBoundary>
   );
 }
