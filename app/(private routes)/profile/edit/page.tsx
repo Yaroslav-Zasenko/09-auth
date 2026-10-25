@@ -1,3 +1,4 @@
+// app/(private routes)/profile/edit/page.tsx
 "use client";
 
 import { useState, useEffect, FormEvent } from "react";
@@ -5,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuthStore } from "@/lib/store/authStore";
 import * as clientApi from "@/lib/api/clientApi";
-import css from "./EditProfilePage.module.css"; // Назва файлу стилів може відрізнятися відповідно до твоїх налаштувань
+import css from "./EditProfilePage.module.css";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function EditProfilePage() {
             <button
               type="button"
               className={css.cancelButton}
-              onClick={() => router.push("/profile")}
+              onClick={() => router.back()}
             >
               Cancel
             </button>

@@ -46,7 +46,7 @@ export const AuthNavigation = () => {
           Login
         </Link>
       </li>
-.      <li className={css.navigationItem}>
+      <li className={css.navigationItem}>
         <Link href="/sign-up" prefetch={false} className={css.navigationLink}>
           Sign up
         </Link>

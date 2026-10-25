@@ -1,3 +1,4 @@
+// app/(auth routes)/sign-up/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -45,6 +46,7 @@ export default function SignUpPage() {
           <label>Email:</label>
           <input
             type="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -56,6 +58,7 @@ export default function SignUpPage() {
           <label>Пароль:</label>
           <input
             type="password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

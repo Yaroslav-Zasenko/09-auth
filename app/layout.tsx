@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Roboto } from 'next/font/google';
@@ -6,6 +7,7 @@ import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
 import { AuthProvider } from '@/components/AuthProvider/AuthProvider';
 import * as serverApi from '@/lib/api/serverApi';
+import { User } from '@/types/user';
 import './globals.css';
 
 const roboto = Roboto({
@@ -40,10 +42,13 @@ export default async function RootLayout({
   children: ReactNode;
   modal: ReactNode;
 }) {
-  let initialUser = null;
+  let initialUser: User | null = null;
 
   try {
-    initialUser = await serverApi.checkSession();
+    const response = await serverApi.checkSession();
+    if (response && response.data) {
+      initialUser = response.data;
+    }
   } catch {
     initialUser = null;
   }

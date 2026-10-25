@@ -1,7 +1,14 @@
+// app/(private routes)/profile/page.tsx
+import type { Metadata } from 'next';
 import Image from "next/image";
 import Link from "next/link";
 import { getMe } from "@/lib/api/serverApi"; // Імпортуємо функцію напряму
 import css from "./ProfilePage.module.css";
+
+export const metadata: Metadata = {
+  title: 'Profile - NoteHub',
+  description: 'User profile page in NoteHub application',
+};
 
 export default async function ProfilePage() {
   const user = await getMe(); // Викликаємо getMe замість serverApi.getMe()
