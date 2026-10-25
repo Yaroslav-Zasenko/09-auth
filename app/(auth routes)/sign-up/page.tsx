@@ -24,7 +24,7 @@ export default function SignUpPage() {
     try {
       const user = await clientApi.register({ email, password });
       setUser(user);
-      router.push('/notes/filter/all');
+      router.push('/profile');
     } catch (err: unknown) {
       const errorMessage = 
         (err as { response?: { data?: { message?: string } } }).response?.data?.message || 

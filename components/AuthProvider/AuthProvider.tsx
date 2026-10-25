@@ -20,7 +20,10 @@ export const AuthProvider = ({ children, initialUser }: AuthProviderProps) => {
       setUser(initialUser);
     } else {
       clientApi
-        .getMe()
+        .checkSession()
+        .then(() => {
+          return clientApi.getMe();
+        })
         .then((user) => {
           if (user) {
             setUser(user);
