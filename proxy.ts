@@ -14,20 +14,40 @@ export async function proxy(request: NextRequest) {
   let accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
+  const response = NextResponse.next();
+
   // Якщо немає accessToken, але є refreshToken — намагаємося оновити сесію
   if (!accessToken && refreshToken) {
     try {
-      const response = await checkSession();
-      // Якщо сервер повернув нові куки або сесія валідна, оновлюємо accessToken
-      if (response && response.status === 200) {
+      const apiResponse = await checkSession();
+
+      // Отримуємо заголовки Set-Cookie з відповіді сервера
+      const setCookieHeader =
+        apiResponse.headers?.["set-cookie"] ||
+        (apiResponse as unknown as Response)?.headers?.get?.("set-cookie");
+
+      if (setCookieHeader) {
+        const cookiesArray = Array.isArray(setCookieHeader)
+          ? setCookieHeader
+          : [setCookieHeader];
+
+        cookiesArray.forEach((cookieStr) => {
+          const [cookiePair] = cookieStr.split(";");
+          const [name, value] = cookiePair.split("=");
+          if (name && value) {
+            cookieStore.set(name.trim(), value.trim());
+            response.cookies.set(name.trim(), value.trim());
+          }
+        });
+
         accessToken = cookieStore.get("accessToken")?.value;
       }
     } catch {
-      // Якщо оновлення сесії не вдалося — ігноруємо, користувач лишається неавторизованим
+      // Якщо оновлення сесії не вдалося — залишаємося неавторизованими
     }
   }
 
-  // Прапорець автентифікації тепер базується лише на accessToken
+  // Прапорець автентифікації базується виключно на наявності accessToken
   const isAuthenticated = Boolean(accessToken);
 
   const isPrivate = privateRoutes.some((route) => pathname.startsWith(route));
@@ -41,7 +61,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

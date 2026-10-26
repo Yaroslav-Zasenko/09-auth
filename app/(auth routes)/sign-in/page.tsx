@@ -25,9 +25,9 @@ export default function SignInPage() {
       const user = await clientApi.login({ email, password });
       setUser(user);
       
-      // Оновлюємо стан роутера та серверні куки перед переходом
+      // Оновлюємо стан роутера та серверні куки перед переходом на /profile
       router.refresh();
-      router.push('/notes/filter/all');
+      router.push('/profile');
     } catch (err: unknown) {
       const errorMessage = 
         (err as { response?: { data?: { message?: string } } }).response?.data?.message || 
